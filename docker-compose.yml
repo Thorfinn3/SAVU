@@ -1,0 +1,61 @@
+version: '2'
+services:
+  web:
+    image: php:5.6-apache
+    container_name: savu-web
+    ports:
+      - 8080:80
+    links:
+      - db
+    expose:
+      - 80
+    network_mode: bridge
+    volumes:
+      - ./htdocs:/var/www/html
+#      - ./logs/web:/var/log/apache2
+
+  db:
+    image: mysql:5.7
+    container_name: savu-db
+    user: root
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=pikaboo
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    network_mode: bridge
+    tty: true
+    stdin_open: true
+
+  asterisk:
+      image: dougbtv/asterisk:latest
+      container_name: savu-asterisk
+      volumes:
+        - ./asterisk/sounds-fr:/var/lib/asterisk/sounds/fr
+        - ./asterisk/conf:/etc/asterisk
+#        - ./asterisk:/etc/asterisk2
+      ports:
+        - 5060:5060/udp
+        - 10000-10020:10000-10020/udp
+      network_mode: host
+      tty: true
+      stdin_open: true
+
+  mysqladmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: savu-myadmin
+    environment:
+      - PMA_HOST=savu-db
+      - PMA_USER=root
+      - PMA_PASSWORD=pikaboo
+    ports:
+      - 9090:80
+    links:
+      - db
+    network_mode: bridge
+
+volumes:
+  mysql:
