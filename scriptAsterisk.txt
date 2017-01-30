@@ -1,0 +1,34 @@
+exten => 8002,1,Goto(accueil,s,1)
+ 
+[accueil]
+exten => s,1,Answer()
+exten => s,2,Set(TIMEOUT(response)=10)
+exten => s,3,Background(voice1)
+exten => s,4,WaitExten()
+ 
+exten => 1,1,Goto(numDoss,6001,1)
+exten => 2,1,Goto(quelPb,6002,1)
+exten => _[3-9#],1,Goto(accueil,s,3)
+exten => t,1,Goto(accueil,s,3)
+
+[numDoss]
+exten => n,1,Answer()
+exten => n,2,Set(TIMEOUT(response)=10)
+exten => n,3,Background(voice2)
+exten => n,4,WaitExten()
+ 
+exten => // dans la bdd pour le num
+exten => // mauvais num
+exten => _[3-9#],1, //il faut que le mec décroche 
+exten => t,1,Goto(numDoss,n,3)
+
+[quelPb]
+exten => n,1,Answer()
+exten => n,2,Set(TIMEOUT(response)=10)
+exten => n,3,Background(voice2)
+exten => n,4,WaitExten()
+ 
+exten => 1,1,Goto(typePb,6001,1)
+exten => 2,1, //il faut que le mec décroche 
+exten => _[3-9#],1,Goto(accueil,s,3)
+exten => t,1,Goto(numDoss,n,3)
